@@ -1,8 +1,10 @@
-version: '3'
+version: '2.1'
 services:
   redis:
     image: redis
-    container_name: redisIoT
+    container_name: redis
+    mem_limit: 200m
+    mem_reservation: 10m
     ports:
       - "6379:6379"
     volumes:
@@ -11,8 +13,10 @@ services:
     network_mode: "host"
     restart: always
   kvserver:
-    image: kvservice_gunicorn
-    container_name: kvdocker
+    image: kvserver
+    container_name: server
+    mem_limit: 100m
+    mem_reservation: 70m
     ports:
       - "5000:5000"
     entrypoint: "gunicorn -w 4 -b 127.0.0.1:5000 server:app" 
@@ -20,6 +24,9 @@ services:
     restart: always  
   nginx:
     image: nginx
+    container_name: nginx
+    mem_limit: 30m
+    mem_reservation: 10m
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/cert.pem:/etc/nginx/cert.pem
