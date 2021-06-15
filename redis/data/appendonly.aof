@@ -275,3 +275,32 @@ $8
 $6
 hallo
 
+*2
+$6
+SELECT
+$1
+0
+*3
+$3
+SET
+$8
+45236798
+$6
+prova
+
+*3
+$3
+SET
+$8
+45236798
+$20
+Questa è una prova
+
+*3
+$3
+SET
+$8
+45236798
+$15
+Un'altra prova
+
