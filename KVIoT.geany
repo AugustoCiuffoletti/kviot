@@ -20,14 +20,22 @@ indent_mode=2
 [project]
 name=KVIoT
 base_path=/home/augusto/Documenti/Lavori/Lavoro62/dev
+description=
 
 [long line marker]
 long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=60;Python;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Fprova1.py;0;4
+current_page=7
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Ftest_get.sh;0;4
+FILE_NAME_1=0;Sh;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Ftest_new.sh;0;4
+FILE_NAME_2=159;Sh;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Ftest_post.sh;0;4
+FILE_NAME_3=370;Sh;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Fstresstest_1.sh;0;4
+FILE_NAME_4=249;Python;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Fflask%2Fserver.py;0;4
+FILE_NAME_5=1206;Python;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Fflask%2Fserver_v1.py;0;4
+FILE_NAME_6=0;Python;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Fflask%2Fprova1.py;0;4
+FILE_NAME_7=186;Sh;0;EUTF-8;1;1;1;%2Fhome%2Faugusto%2FDocumenti%2FLavori%2FLavoro62%2Fdev%2Fdummy_mote.sh;0;4
 
 [VTE]
 last_dir=/home/augusto
