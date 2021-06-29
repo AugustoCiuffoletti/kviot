@@ -1,12 +1,14 @@
 FROM python:3-alpine
 WORKDIR /opt/kvserver
 
-COPY server.py requirements.txt ./
+COPY requirements.txt ./
 
 # RUN apt-get -y update
 RUN pip3 install -r requirements.txt
 
+COPY server.py ./
+
 EXPOSE 5000
 
 # CMD ["python3", "./server.py"]
-CMD ["gunicorn",  "-w 4", "server:app"]
+CMD [“gunicorn”,  "-w 4", "server:app"]
