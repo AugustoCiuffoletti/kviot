@@ -2,9 +2,15 @@ from flask import Flask, request, abort
 from redis.client import Redis
 import uuid
 import json
- 
+
+conf = {}
 app = Flask(__name__)
 r = Redis()
+
+with open('/etc/kviot.json', 'r') as fh: 
+    conf=json.load(fh)
+
+print(conf);
  
 @app.route('/<key>',methods = ['GET','POST','PUT'])
 def KVsvc(key):
@@ -28,10 +34,11 @@ def KVsvc(key):
 # store value in new key
 			r.set(newKey,value)
 # delete old key
-			r.delete(key)
+			if ( key != conf["masterKey"] ):
+				r.delete(key)
 # return value and the new key
 			print(value)
-			data.append(newKey)
+			data[2]=newKey
 			print(data)
 			return json.dumps(data)
 		else:
