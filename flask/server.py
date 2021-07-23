@@ -2,9 +2,15 @@ from flask import Flask, request, abort
 from redis.client import Redis
 import uuid
 import json
- 
+
+conf = {}
 app = Flask(__name__)
 r = Redis()
+
+with open('/etc/kviot.json', 'r') as fh: 
+    conf=json.load(fh)
+
+print(conf);
  
 @app.route('/<key>',methods = ['GET','POST','PUT'])
 def KVsvc(key):
@@ -28,7 +34,8 @@ def KVsvc(key):
 # store value in new key
 			r.set(newKey,value)
 # delete old key
-			r.delete(key)
+			if ( key != conf["masterKey"] ):
+				r.delete(key)
 # return value and the new key
 			print(value)
 			data[2]=newKey
@@ -60,16 +67,6 @@ def KVsvc(key):
 			return data
 	else:		
 		return abort(405,"Only GET and POST methods are accepted on this route")
-			
-@app.route('/new/<key>')
-def NewKey(key):
-	# Qui dovrei mettere una transazione atomica tra exists e set
-	if ( r.exists(key) == 0 ):
-		r.set(key,"NULL")
-		return key
-	else:
-		print("Occupata")
-		abort(409,"The key already exists in the database")
 
 if __name__ == '__main__':
    app.run()
