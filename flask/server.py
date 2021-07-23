@@ -60,16 +60,6 @@ def KVsvc(key):
 			return data
 	else:		
 		return abort(405,"Only GET and POST methods are accepted on this route")
-			
-@app.route('/new/<key>')
-def NewKey(key):
-	# Qui dovrei mettere una transazione atomica tra exists e set
-	if ( r.exists(key) == 0 ):
-		r.set(key,"NULL")
-		return key
-	else:
-		print("Occupata")
-		abort(409,"The key already exists in the database")
 
 if __name__ == '__main__':
    app.run()
