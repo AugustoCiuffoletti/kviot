@@ -50,21 +50,17 @@ def KVsvc(key):
 		data=request.get_data()
 		print(data)
 		print(key)
-		if ( r.exists(key) ):
-			r.set(key,data)
-			return data
-		else:
-			abort(404, "POST: The key does not exists in the database")
+		if ( r.set(key,data,xx=True) is None ):
+			abort(409, "PUT: The key does not exists in the database")
+		return data
 ##########
 # PUT
 ##########	
 	elif request.method == 'PUT':
 		data=request.get_data()
-		if ( r.exists(key) ):
+		if ( r.set(key,data,nx=True) is None ):
 			abort(409, "PUT: The key already exists in the database")
-		else:
-			r.set(key,data)
-			return data
+		return data
 	else:		
 		return abort(405,"Only GET and POST methods are accepted on this route")
 
