@@ -28,6 +28,6 @@ headers = {
 	"ContentType": "application/json"
 }
 
-r = requests.post('http://' + url + '/' + key, headers = headers, data=json.dumps(value))
+r = requests.post('http://' + url + '/' + key, json.dumps(value), headers = headers)
 
 print(r.text)[:200]

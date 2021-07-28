@@ -2,66 +2,74 @@ from flask import Flask, request, abort
 from redis.client import Redis
 import uuid
 import json
+import logging
+import time
 
 conf = {}
+loglevel=[logging.DEBUG,logging.INFO,logging.WARNING,logging.ERROR,logging.CRITICAL]
 app = Flask(__name__)
 r = Redis()
 
 with open('/etc/kviot.json', 'r') as fh: 
     conf=json.load(fh)
+    
+logging.basicConfig(filename='/var/log/kviot.log', encoding='utf-8', level=loglevel[conf["loglevel"]])
 
 print(conf);
- 
+logging.info("========== New Service Starting ===========")
 @app.route('/<key>',methods = ['GET','POST','PUT'])
 def KVsvc(key):
 ##########
 # GET
 ##########
 	if request.method == 'GET':
+		logging.info(str(time.time()) + ": " + "GET " + request.remote_addr + ' ' + key)
 # get value as a JSON string
 		value = r.get(key)
-		if ( value != None ):
+		if ( value is not None ):
 # decode JSON value
 			try:
 				data = json.loads(value)
+				logging.info(str(time.time()) + ":  " + str(value, 'UTF-8'))
 			except Exception as e:
-				print(e)
+				logging.critical(str(time.time()) + ": Not a JSON string")
 				abort(500, "GET: Data error")
-# find new key
-			newKey = uuid.uuid4().hex[0:8]
-			while ( r.exists(newKey) ):
-				newKey = uuid.uuid4().hex[0:8]
 # store value in new key
-			r.set(newKey,value)
+			newKey = uuid.uuid4().hex[0:8]
+			while ( r.set(newKey, value, nx=True) is None ):
+				newKey = uuid.uuid4().hex[0:8]
 # delete old key
 			if ( key != conf["masterKey"] ):
 				r.delete(key)
 # return value and the new key
-			print(value)
 			data[2]=newKey
-			print(data)
+			logging.info(str(time.time()) + ":  " + str(data))
 			return json.dumps(data)
 		else:
+			logging.warning(str(time.time()) + ": The key does not exists in the database")
 			abort(404, "GET: The key does not exists in the database")
 ##########
 # POST
 ##########
 	elif request.method == 'POST':
 		data=request.get_data()
-		print(data)
-		print(key)
+		logging.info(str(time.time()) + ": " + "POST " + request.remote_addr + ' ' + key + ' -> ' + str(data, 'UTF-8'))
 		if ( r.set(key,data,xx=True) is None ):
-			abort(409, "PUT: The key does not exists in the database")
+			logging.warning(str(time.time()) + ": The key does not exists in the database")
+			abort(409, "POST: The key does not exists in the database")
 		return data
 ##########
 # PUT
 ##########	
 	elif request.method == 'PUT':
 		data=request.get_data()
+		logging.info(str(time.time()) + ": " + "PUT " + request.remote_addr + ' ' + key + ' -> ' + str(data, 'UTF-8'))
 		if ( r.set(key,data,nx=True) is None ):
+			logging.warning(str(time.time()) + ": The key already exists in the database")
 			abort(409, "PUT: The key already exists in the database")
 		return data
 	else:		
+		logging.error("Only GET and POST methods are accepted on this route")
 		return abort(405,"Only GET and POST methods are accepted on this route")
 
 if __name__ == '__main__':
