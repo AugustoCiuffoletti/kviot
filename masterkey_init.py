@@ -1,10 +1,24 @@
 #!/usr/bin/python
 import json
+import sys, getopt
 from redis.client import Redis
 
-masterkey = "34567890"
+masterkey = "12345678"
 
-r = Redis()
+#default
+url = "127.0.0.1"
+
+opts, args = getopt.getopt(sys.argv[1:], "r")
+
+for opt, arg in opts:
+	if opt == '-r':
+         url = "192.168.113.181"
+         print("Querying the Raspberry")
+	else:
+		print "Not a legal option"
+		exit(1)
+
+r = Redis(host=url)
 
 payload = {
 	"id": "Posto 7",
