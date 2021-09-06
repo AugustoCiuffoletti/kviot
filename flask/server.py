@@ -17,20 +17,20 @@ logging.basicConfig(filename='/var/log/kviot.log', encoding='utf-8', level=logle
 
 print(conf);
 logging.info("========== New Service Starting ===========")
-@app.route('/<key>',methods = ['GET','POST','PUT'])
+@app.route('/<key>',methods = ['GET','POST','PUT','HEAD'])
 def KVsvc(key):
 ##########
 # GET
 ##########
 	if request.method == 'GET':
-		logging.info(str(time.time()) + ": " + "GET " + request.remote_addr + ' ' + key)
+		logging.info(str(time.time()) + ": " + "GET " + request.remote_addr + ' ' + key) #T0
 # get value as a JSON string
 		value = r.get(key)
 		if ( value is not None ):
 # decode JSON value
 			try:
 				data = json.loads(value)
-				logging.info(str(time.time()) + ":  " + str(value, 'UTF-8'))
+				logging.info(str(time.time()) + ":  " + str(value, 'UTF-8')) #T1
 			except Exception as e:
 				logging.critical(str(time.time()) + ": Not a JSON string")
 				abort(500, "GET: Data error")
@@ -43,7 +43,7 @@ def KVsvc(key):
 				r.delete(key)
 # return value and the new key
 			data[2]=newKey
-			logging.info(str(time.time()) + ":  " + str(data))
+			logging.info(str(time.time()) + ":  " + str(data)) #T2
 			return json.dumps(data)
 		else:
 			logging.warning(str(time.time()) + ": The key does not exists in the database")
@@ -53,7 +53,7 @@ def KVsvc(key):
 ##########
 	elif request.method == 'POST':
 		data=request.get_data()
-		logging.info(str(time.time()) + ": " + "POST " + request.remote_addr + ' ' + key + ' -> ' + str(data, 'UTF-8'))
+		logging.info(str(time.time()) + ": " + "POST " + request.remote_addr + ' ' + key + ' -> ' + str(data, 'UTF-8')) #T3
 		if ( r.set(key,data,xx=True) is None ):
 			logging.warning(str(time.time()) + ": The key does not exists in the database")
 			abort(409, "POST: The key does not exists in the database")
@@ -68,9 +68,23 @@ def KVsvc(key):
 			logging.warning(str(time.time()) + ": The key already exists in the database")
 			abort(409, "PUT: The key already exists in the database")
 		return data
+##########
+# HEAD
+##########
+	if request.method == 'HEAD':
+		logging.info(str(time.time()) + ": " + "HEAD " + request.remote_addr + ' ' + key)
+# get value as a JSON string
+		value = r.get(key)
+		if ( value is not None ):
+			logging.info(str(time.time()) + ":  key found")
+# no entity and no key swapping, just return success (key found)
+			return ('',200)
+		else:
+			logging.warning(str(time.time()) + ": The key does not exists in the database")
+			abort(404, "HEAD: The key does not exists in the database")
 	else:		
-		logging.error("Only GET and POST methods are accepted on this route")
-		return abort(405,"Only GET and POST methods are accepted on this route")
+		logging.error("Only GET, POST, PUT and HEAD methods are accepted on this route")
+		return abort(405,"Only GET, POST, PUT and HEAD methods are accepted on this route")
 
 if __name__ == '__main__':
    app.run()
