@@ -6,7 +6,7 @@
 - implement a secure checkpoint repository for edge units
 - provide a UTC reference to the edge units
 
-The last two functions are strictly related with the management of the duty-cycle of peripheral units.
+The last two functions are strictly related with the management of the duty-cycle of peripheral units. The kviot server is integrated with an Andriod app, whose code can be downloaded from https://drive.google.com/file/d/18qX5JKahPh3ouHEERzP--Cq4jrtIjv3u/view?usp=sharing.
 
 ## Energy footprint, duty cycle, and deep sleep
 
